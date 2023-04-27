@@ -1,0 +1,140 @@
+package test;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Random;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+public class PacManGame extends JPanel implements KeyListener, ActionListener {
+
+	int pacManX = 100;
+	int pacManY = 100;
+	int pacManXcenter = pacManX + 20;
+	int pacManYcenter = pacManY + 20;
+	int pacManSpeed = 5;
+	int pacManRadius = 20;
+	int diameter = 20;
+	int xcenter = 300;
+	int ycenter = 300;
+	double dis;
+	Timer timer = new Timer(5000, this);
+	Timer move = new Timer(50, this);
+
+	boolean leftPressed = false;
+	boolean rightPressed = false;
+	boolean upPressed = false;
+	boolean downPressed = false;
+
+	public PacManGame() {
+		JFrame frame = new JFrame("Pac-Man Game");
+		frame.setSize(600, 400);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.addKeyListener(this);
+		frame.add(this);
+		frame.setVisible(true);
+		frame.setFocusable(true);
+		timer.start();
+		move.start();
+	}
+
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		this.setBackground(Color.BLACK);
+		g.setColor(MyFrame.pacmancolor);
+		g.fillArc(pacManX - pacManRadius, pacManY - pacManRadius, pacManRadius * 2, pacManRadius * 2, 45, 270);
+		g.setColor(Color.ORANGE);
+		g.fillOval(xcenter - diameter / 2, ycenter - diameter / 2, diameter, diameter);
+	}
+
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+			leftPressed = true;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			rightPressed = true;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_UP) {
+			upPressed = true;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+			downPressed = true;
+		}
+		repaint();
+	}
+
+	public void keyReleased(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+			leftPressed = false;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			rightPressed = false;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_UP) {
+			upPressed = false;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+			downPressed = false;
+		}
+		repaint();
+	}
+
+	public void keyTyped(KeyEvent e) {
+		// not used
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if (e.getSource() == timer) {
+			Random random = new Random();
+			xcenter = random.nextInt(getWidth());
+			ycenter = random.nextInt(getHeight());
+		}
+		pacManXcenter = pacManX + 10;
+		pacManYcenter = pacManY + 10;
+		dis = Math.sqrt(Math.pow(pacManXcenter - (xcenter + 10), 2)) + Math.pow(pacManYcenter - (ycenter + 10), 2);
+		if (e.getSource() == move) {
+			if (dis < 20) {
+				System.out.println("Thanks you for playing");
+				timer.stop();
+				move.stop();
+			} else {
+				if (leftPressed) {
+					pacManX -= pacManSpeed;
+				}
+				if (rightPressed) {
+					pacManX += pacManSpeed;
+				}
+				if (upPressed) {
+					pacManY -= pacManSpeed;
+				}
+				if (downPressed) {
+					pacManY += pacManSpeed;
+				}
+				if (pacManX < pacManRadius) {
+					pacManX = pacManRadius;
+				}
+				if (pacManX > getWidth() - pacManRadius) {
+					pacManX = getWidth() - pacManRadius;
+				}
+				if (pacManY < pacManRadius) {
+					pacManY = pacManRadius;
+				}
+				if (pacManY > getHeight() - pacManRadius) {
+					pacManY = getHeight() - pacManRadius;
+				}
+			}
+
+		}
+		repaint();
+
+	}
+
+}
